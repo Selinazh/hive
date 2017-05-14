@@ -1,0 +1,1 @@
+alter table mp2 partition (b='1') disable NO_DROP;

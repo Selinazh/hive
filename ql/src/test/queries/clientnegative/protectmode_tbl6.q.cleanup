@@ -1,0 +1,1 @@
+alter table tbl_protectmode_tbl6 disable no_drop cascade;

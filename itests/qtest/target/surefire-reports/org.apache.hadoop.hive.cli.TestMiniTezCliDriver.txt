@@ -1,0 +1,10 @@
+-------------------------------------------------------------------------------
+Test set: org.apache.hadoop.hive.cli.TestMiniTezCliDriver
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 16.853 sec <<< FAILURE! - in org.apache.hadoop.hive.cli.TestMiniTezCliDriver
+initializationError(org.apache.hadoop.hive.cli.TestMiniTezCliDriver)  Time elapsed: 0.007 sec  <<< FAILURE!
+junit.framework.AssertionFailedError: Unexpected exception in static initialization: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient
+	at junit.framework.Assert.fail(Assert.java:57)
+	at junit.framework.TestCase.fail(TestCase.java:227)
+	at org.apache.hadoop.hive.cli.TestMiniTezCliDriver.<clinit>(TestMiniTezCliDriver.java:64)
+

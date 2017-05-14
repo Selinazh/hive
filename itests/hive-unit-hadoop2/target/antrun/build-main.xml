@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <mkdir dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hive-unit-hadoop2/target/tmp/scripts/metastore"/>
+  <copy todir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hive-unit-hadoop2/target/tmp/scripts/metastore">
+    <fileset dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hive-unit-hadoop2/../../metastore/scripts/"/>
+  </copy>
+</target>
+</project>

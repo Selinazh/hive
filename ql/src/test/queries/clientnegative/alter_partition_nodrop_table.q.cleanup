@@ -1,0 +1,1 @@
+alter table alter_part_nodrop_table partition (year='1996') disable no_drop;

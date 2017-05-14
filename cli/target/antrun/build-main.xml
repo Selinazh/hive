@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <delete dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/target/tmp"/>
+  <delete dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/target/warehouse"/>
+  <mkdir dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/target/tmp"/>
+  <mkdir dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/target/warehouse"/>
+  <mkdir dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/target/tmp/conf"/>
+  <copy todir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/target/tmp/conf/">
+    <fileset dir="/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/cli/../data/conf/"/>
+  </copy>
+</target>
+</project>

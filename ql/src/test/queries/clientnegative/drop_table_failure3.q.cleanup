@@ -1,0 +1,1 @@
+alter table drop_table_failure_temp partition (p ='p3') DISABLE NO_DROP;

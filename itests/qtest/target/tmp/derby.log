@@ -1,0 +1,14 @@
+----------------------------------------------------------------
+Mon Apr 17 17:16:26 PDT 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-015b-7e6a-e4a5-000026a0e5c8 
+on database directory /Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/qtest/target/tmp/junit_metastore_db with class loader sun.misc.Launcher$AppClassLoader@28d93b30 
+Loaded from file:/Users/selinaz/testmvn/org/apache/derby/derby/10.10.2.0/derby-10.10.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_111-b14
+user.dir=/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/qtest
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.12.4
+derby.system.home=null
+derby.stream.error.file=/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/qtest/target/tmp/derby.log
+Database Class Loader started - derby.database.classpath=''

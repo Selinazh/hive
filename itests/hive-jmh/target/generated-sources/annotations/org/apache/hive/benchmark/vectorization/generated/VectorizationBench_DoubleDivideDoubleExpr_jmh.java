@@ -1,0 +1,4 @@
+package org.apache.hive.benchmark.vectorization.generated;
+public class VectorizationBench_DoubleDivideDoubleExpr_jmh extends VectorizationBench_DoubleDivideDoubleExpr_jmh_B3 {
+}
+

@@ -1,0 +1,2 @@
+alter table tbl_protectmode_tbl4 disable offline;
+alter table tbl_protectmode_tbl4 disable no_drop;

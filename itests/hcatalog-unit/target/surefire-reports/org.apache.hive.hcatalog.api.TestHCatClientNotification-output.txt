@@ -1,0 +1,134 @@
+log4j: Using URL [file:/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hcatalog-unit/target/tmp/conf/hive-log4j.properties] for automatic log4j configuration.
+log4j: Reading configuration from URL file:/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hcatalog-unit/target/tmp/conf/hive-log4j.properties
+log4j: Parsing for [root] with value=[DEBUG,DRFA, EventCounter].
+log4j: Level token is [DEBUG].
+log4j: Category root set to DEBUG
+log4j: Parsing appender named "DRFA".
+log4j: Parsing layout options for "DRFA".
+log4j: Setting property [conversionPattern] to [%d{ISO8601} %-5p [%t]: %c{2} (%F:%M(%L)) - %m%n].
+log4j: End of parsing for "DRFA".
+log4j: Setting property [datePattern] to [.yyyy-MM-dd].
+log4j: Setting property [file] to [/Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hcatalog-unit/target/tmp/log//hive.log].
+log4j: setFile called: /Users/selinaz/dev/branch-1.2-skewjoinNPE/hive/itests/hcatalog-unit/target/tmp/log//hive.log, true
+log4j: setFile ended
+log4j: Appender [DRFA] to be rolled at midnight.
+log4j: Parsed "DRFA" options.
+log4j: Parsing appender named "EventCounter".
+log4j: Parsed "EventCounter" options.
+log4j: Parsing for [org.apache.zookeeper.ClientCnxnSocketNIO] with value=[WARN,DRFA].
+log4j: Level token is [WARN].
+log4j: Category org.apache.zookeeper.ClientCnxnSocketNIO set to WARN
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.zookeeper.ClientCnxnSocketNIO=[null]
+log4j: Parsing for [DataNucleus] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category DataNucleus set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.DataNucleus=[null]
+log4j: Parsing for [org.apache.zookeeper.server.ServerCnxn] with value=[WARN,DRFA].
+log4j: Level token is [WARN].
+log4j: Category org.apache.zookeeper.server.ServerCnxn set to WARN
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.zookeeper.server.ServerCnxn=[null]
+log4j: Parsing for [org.apache.zookeeper] with value=[INFO,DRFA].
+log4j: Level token is [INFO].
+log4j: Category org.apache.zookeeper set to INFO
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.zookeeper=[null]
+log4j: Parsing for [JPOX.Enhancer] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category JPOX.Enhancer set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.JPOX.Enhancer=[null]
+log4j: Parsing for [JPOX.MetaData] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category JPOX.MetaData set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.JPOX.MetaData=[null]
+log4j: Parsing for [org.apache.hadoop.hive.metastore.ObjectStore] with value=[INFO,DRFA].
+log4j: Level token is [INFO].
+log4j: Category org.apache.hadoop.hive.metastore.ObjectStore set to INFO
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.hadoop.hive.metastore.ObjectStore=[null]
+log4j: Parsing for [org.apache.hadoop.hive.ql.exec.Operator] with value=[INFO,DRFA].
+log4j: Level token is [INFO].
+log4j: Category org.apache.hadoop.hive.ql.exec.Operator set to INFO
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.hadoop.hive.ql.exec.Operator=[null]
+log4j: Parsing for [JPOX.Plugin] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category JPOX.Plugin set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.JPOX.Plugin=[null]
+log4j: Parsing for [JPOX.Datastore] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category JPOX.Datastore set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.JPOX.Datastore=[null]
+log4j: Parsing for [org.apache.hadoop.hive.serde2.lazy] with value=[INFO,DRFA].
+log4j: Level token is [INFO].
+log4j: Category org.apache.hadoop.hive.serde2.lazy set to INFO
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.hadoop.hive.serde2.lazy=[null]
+log4j: Parsing for [org.apache.zookeeper.ClientCnxn] with value=[WARN,DRFA].
+log4j: Level token is [WARN].
+log4j: Category org.apache.zookeeper.ClientCnxn set to WARN
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.zookeeper.ClientCnxn=[null]
+log4j: Parsing for [org.apache.zookeeper.ClientCnxnSocket] with value=[WARN,DRFA].
+log4j: Level token is [WARN].
+log4j: Category org.apache.zookeeper.ClientCnxnSocket set to WARN
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.zookeeper.ClientCnxnSocket=[null]
+log4j: Parsing for [Datastore.Schema] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category Datastore.Schema set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.Datastore.Schema=[null]
+log4j: Parsing for [JPOX.General] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category JPOX.General set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.JPOX.General=[null]
+log4j: Parsing for [Datastore] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category Datastore set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.Datastore=[null]
+log4j: Parsing for [org.apache.zookeeper.server.NIOServerCnxn] with value=[WARN,DRFA].
+log4j: Level token is [WARN].
+log4j: Category org.apache.zookeeper.server.NIOServerCnxn set to WARN
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.zookeeper.server.NIOServerCnxn=[null]
+log4j: Parsing for [org.apache.hadoop.hive.ql.log.PerfLogger] with value=[].
+log4j: Handling log4j.additivity.org.apache.hadoop.hive.ql.log.PerfLogger=[null]
+log4j: Parsing for [org.apache.hadoop.conf.Configuration] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category org.apache.hadoop.conf.Configuration set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.org.apache.hadoop.conf.Configuration=[null]
+log4j: Parsing for [JPOX.Query] with value=[ERROR,DRFA].
+log4j: Level token is [ERROR].
+log4j: Category JPOX.Query set to ERROR
+log4j: Parsing appender named "DRFA".
+log4j: Appender "DRFA" was already parsed.
+log4j: Handling log4j.additivity.JPOX.Query=[null]
+log4j: Finished configuring.

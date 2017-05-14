@@ -1,0 +1,1 @@
+alter table tbl_protectmode_no_drop partition (p='p1') disable no_drop;

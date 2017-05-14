@@ -1,0 +1,1 @@
+alter table tbl_protectmode3 partition (p='p1') disable offline;

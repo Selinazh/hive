@@ -1,0 +1,1182 @@
+PREHOOK: query: CREATE TABLE DEST1(key STRING, value BIGINT) STORED AS TEXTFILE
+PREHOOK: type: CREATETABLE
+PREHOOK: Output: database:default
+PREHOOK: Output: default@DEST1
+POSTHOOK: query: CREATE TABLE DEST1(key STRING, value BIGINT) STORED AS TEXTFILE
+POSTHOOK: type: CREATETABLE
+POSTHOOK: Output: database:default
+POSTHOOK: Output: default@DEST1
+PREHOOK: query: FROM SRC
+INSERT OVERWRITE TABLE DEST1 SELECT SRC.key, COUNT(1) GROUP BY SRC.key limit 10
+PREHOOK: type: QUERY
+PREHOOK: Input: default@src
+PREHOOK: Output: default@dest1
+POSTHOOK: query: FROM SRC
+INSERT OVERWRITE TABLE DEST1 SELECT SRC.key, COUNT(1) GROUP BY SRC.key limit 10
+POSTHOOK: type: QUERY
+POSTHOOK: Input: default@src
+POSTHOOK: Output: default@dest1
+POSTHOOK: Lineage: dest1.key SIMPLE [(src)src.FieldSchema(name:key, type:string, comment:default), ]
+POSTHOOK: Lineage: dest1.value EXPRESSION [(src)src.null, ]
+PREHOOK: query: CREATE TABLE SRCPART_LIMIT (key STRING, value STRING) PARTITIONED BY (ds STRING, hr STRING)
+PREHOOK: type: CREATETABLE
+PREHOOK: Output: database:default
+PREHOOK: Output: default@SRCPART_LIMIT
+POSTHOOK: query: CREATE TABLE SRCPART_LIMIT (key STRING, value STRING) PARTITIONED BY (ds STRING, hr STRING)
+POSTHOOK: type: CREATETABLE
+POSTHOOK: Output: database:default
+POSTHOOK: Output: default@SRCPART_LIMIT
+PREHOOK: query: ALTER TABLE SRCPART_LIMIT ADD PARTITION (ds='2008-04-08', hr='11')
+PREHOOK: type: ALTERTABLE_ADDPARTS
+PREHOOK: Output: default@srcpart_limit
+POSTHOOK: query: ALTER TABLE SRCPART_LIMIT ADD PARTITION (ds='2008-04-08', hr='11')
+POSTHOOK: type: ALTERTABLE_ADDPARTS
+POSTHOOK: Output: default@srcpart_limit
+POSTHOOK: Output: default@srcpart_limit@ds=2008-04-08/hr=11
+PREHOOK: query: ALTER TABLE SRCPART_LIMIT ADD PARTITION (ds='2008-04-08', hr='12')
+PREHOOK: type: ALTERTABLE_ADDPARTS
+PREHOOK: Output: default@srcpart_limit
+POSTHOOK: query: ALTER TABLE SRCPART_LIMIT ADD PARTITION (ds='2008-04-08', hr='12')
+POSTHOOK: type: ALTERTABLE_ADDPARTS
+POSTHOOK: Output: default@srcpart_limit
+POSTHOOK: Output: default@srcpart_limit@ds=2008-04-08/hr=12
+PREHOOK: query: LOAD DATA LOCAL INPATH '../../data/files/kv1.txt' INTO TABLE SRCPART_LIMIT PARTITION (ds='2008-04-08', hr='11')
+PREHOOK: type: LOAD
+#### A masked pattern was here ####
+PREHOOK: Output: default@srcpart_limit@ds=2008-04-08/hr=11
+POSTHOOK: query: LOAD DATA LOCAL INPATH '../../data/files/kv1.txt' INTO TABLE SRCPART_LIMIT PARTITION (ds='2008-04-08', hr='11')
+POSTHOOK: type: LOAD
+#### A masked pattern was here ####
+POSTHOOK: Output: default@srcpart_limit@ds=2008-04-08/hr=11
+PREHOOK: query: LOAD DATA LOCAL INPATH '../../data/files/kv1.txt' INTO TABLE SRCPART_LIMIT PARTITION (ds='2008-04-08', hr='12')
+PREHOOK: type: LOAD
+#### A masked pattern was here ####
+PREHOOK: Output: default@srcpart_limit@ds=2008-04-08/hr=12
+POSTHOOK: query: LOAD DATA LOCAL INPATH '../../data/files/kv1.txt' INTO TABLE SRCPART_LIMIT PARTITION (ds='2008-04-08', hr='12')
+POSTHOOK: type: LOAD
+#### A masked pattern was here ####
+POSTHOOK: Output: default@srcpart_limit@ds=2008-04-08/hr=12
+PREHOOK: query: EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+PREHOOK: type: QUERY
+POSTHOOK: query: EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+POSTHOOK: type: QUERY
+STAGE DEPENDENCIES:
+  Stage-1 is a root stage
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 4 (SIMPLE_EDGE)
+        Reducer 3 <- Reducer 2 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: a
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: key is not null (type: boolean)
+                    Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: key (type: string)
+                      sort order: +
+                      Map-reduce partition columns: key (type: string)
+                      Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: value (type: string)
+        Map 4 
+            Map Operator Tree:
+                TableScan
+                  alias: b
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: key is not null (type: boolean)
+                    Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: key (type: string)
+                      sort order: +
+                      Map-reduce partition columns: key (type: string)
+                      Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: value (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Inner Join 0 to 1
+                keys:
+                  0 key (type: string)
+                  1 key (type: string)
+                outputColumnNames: _col0, _col1, _col6
+                Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col0 (type: string), _col1 (type: string), _col6 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2
+                  Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                  Reduce Output Operator
+                    key expressions: _col0 (type: string)
+                    sort order: +
+                    Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                    value expressions: _col1 (type: string), _col2 (type: bigint)
+        Reducer 3 
+            Reduce Operator Tree:
+              Select Operator
+                expressions: KEY.reducesinkkey0 (type: string), VALUE._col0 (type: string), VALUE._col1 (type: bigint)
+                outputColumnNames: _col0, _col1, _col2
+                Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                File Output Operator
+                  compressed: false
+                  Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                  table:
+                      input format: org.apache.hadoop.mapred.TextInputFormat
+                      output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                      serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
+
+PREHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+PREHOOK: type: QUERY
+PREHOOK: Input: default@dest1
+PREHOOK: Input: default@src
+#### A masked pattern was here ####
+POSTHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+POSTHOOK: type: QUERY
+POSTHOOK: Input: default@dest1
+POSTHOOK: Input: default@src
+#### A masked pattern was here ####
+0	val_0	3
+0	val_0	3
+0	val_0	3
+10	val_10	1
+100	val_100	2
+100	val_100	2
+103	val_103	2
+103	val_103	2
+104	val_104	2
+104	val_104	2
+105	val_105	1
+11	val_11	1
+111	val_111	1
+113	val_113	2
+113	val_113	2
+114	val_114	1
+PREHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a LEFT OUTER JOIN DEST1 b ON a.key = b.key ORDER BY a.key LIMIT 10
+PREHOOK: type: QUERY
+PREHOOK: Input: default@dest1
+PREHOOK: Input: default@src
+#### A masked pattern was here ####
+POSTHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a LEFT OUTER JOIN DEST1 b ON a.key = b.key ORDER BY a.key LIMIT 10
+POSTHOOK: type: QUERY
+POSTHOOK: Input: default@dest1
+POSTHOOK: Input: default@src
+#### A masked pattern was here ####
+0	val_0	3
+0	val_0	3
+0	val_0	3
+10	val_10	1
+100	val_100	2
+100	val_100	2
+103	val_103	2
+103	val_103	2
+104	val_104	2
+104	val_104	2
+PREHOOK: query: EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+PREHOOK: type: QUERY
+POSTHOOK: query: EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+POSTHOOK: type: QUERY
+STAGE DEPENDENCIES:
+  Stage-4 is a root stage
+  Stage-5 depends on stages: Stage-4
+  Stage-3 depends on stages: Stage-4
+  Stage-1 depends on stages: Stage-4
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-4
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: src
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: (((hash(rand()) & 2147483647) % 200) = 0) (type: boolean)
+                    Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                    Group By Operator
+                      aggregations: count(1)
+                      keys: key (type: string)
+                      mode: hash
+                      outputColumnNames: _col0, _col1
+                      Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                      Reduce Output Operator
+                        key expressions: _col0 (type: string)
+                        sort order: +
+                        Map-reduce partition columns: _col0 (type: string)
+                        Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                        value expressions: _col1 (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Group By Operator
+                aggregations: count(VALUE._col0)
+                keys: KEY._col0 (type: string)
+                mode: mergepartial
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 125 Data size: 1328 Basic stats: COMPLETE Column stats: NONE
+                Filter Operator
+                  predicate: (ceil((_col1 / 0.01)) > 1) (type: boolean)
+                  Statistics: Num rows: 41 Data size: 435 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: _col0 (type: string), _col1 (type: bigint), ceil((_col1 / 0.01)) (type: bigint)
+                    outputColumnNames: _col0, _col1, _col2
+                    Statistics: Num rows: 41 Data size: 435 Basic stats: COMPLETE Column stats: NONE
+                    File Output Operator
+                      compressed: false
+                      Statistics: Num rows: 41 Data size: 435 Basic stats: COMPLETE Column stats: NONE
+                      table:
+                          input format: org.apache.hadoop.mapred.TextInputFormat
+                          output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                          serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+            Execution mode: vectorized
+
+  Stage: Stage-5
+    Dependency Collection
+
+  Stage: Stage-3
+    Move Operator
+      files:
+          hdfs directory: true
+#### A masked pattern was here ####
+
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 4 (SIMPLE_EDGE)
+        Reducer 3 <- Reducer 2 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: a
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: key is not null (type: boolean)
+                    Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: key (type: string)
+                      sort order: +
+                      Map-reduce partition columns: key (type: string)
+                      Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: value (type: string)
+        Map 4 
+            Map Operator Tree:
+                TableScan
+                  alias: b
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: key is not null (type: boolean)
+                    Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: key (type: string)
+                      sort order: +
+                      Map-reduce partition columns: key (type: string)
+                      Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: value (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Inner Join 0 to 1
+                keys:
+                  0 key (type: string)
+                  1 key (type: string)
+                outputColumnNames: _col0, _col1, _col6
+                Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col0 (type: string), _col1 (type: string), _col6 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2
+                  Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                  Reduce Output Operator
+                    key expressions: _col0 (type: string)
+                    sort order: +
+                    Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                    value expressions: _col1 (type: string), _col2 (type: bigint)
+        Reducer 3 
+            Reduce Operator Tree:
+              Select Operator
+                expressions: KEY.reducesinkkey0 (type: string), VALUE._col0 (type: string), VALUE._col1 (type: bigint)
+                outputColumnNames: _col0, _col1, _col2
+                Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                File Output Operator
+                  compressed: false
+                  Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                  table:
+                      input format: org.apache.hadoop.mapred.TextInputFormat
+                      output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                      serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+            Execution mode: vectorized
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
+
+PREHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+PREHOOK: type: QUERY
+PREHOOK: Input: default@dest1
+PREHOOK: Input: default@src
+#### A masked pattern was here ####
+POSTHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a JOIN DEST1 b ON a.key = b.key ORDER BY a.key
+POSTHOOK: type: QUERY
+POSTHOOK: Input: default@dest1
+POSTHOOK: Input: default@src
+#### A masked pattern was here ####
+0	val_0	3
+0	val_0	3
+0	val_0	3
+10	val_10	1
+100	val_100	2
+100	val_100	2
+103	val_103	2
+103	val_103	2
+104	val_104	2
+104	val_104	2
+105	val_105	1
+11	val_11	1
+111	val_111	1
+113	val_113	2
+113	val_113	2
+114	val_114	1
+PREHOOK: query: EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a LEFT OUTER JOIN DEST1 b ON a.key = b.key ORDER BY a.key LIMIT 10
+PREHOOK: type: QUERY
+POSTHOOK: query: EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a LEFT OUTER JOIN DEST1 b ON a.key = b.key ORDER BY a.key LIMIT 10
+POSTHOOK: type: QUERY
+STAGE DEPENDENCIES:
+  Stage-4 is a root stage
+  Stage-5 depends on stages: Stage-4
+  Stage-3 depends on stages: Stage-4
+  Stage-1 depends on stages: Stage-4
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-4
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: src
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: (((hash(rand()) & 2147483647) % 200) = 0) (type: boolean)
+                    Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                    Group By Operator
+                      aggregations: count(1)
+                      keys: key (type: string)
+                      mode: hash
+                      outputColumnNames: _col0, _col1
+                      Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                      Reduce Output Operator
+                        key expressions: _col0 (type: string)
+                        sort order: +
+                        Map-reduce partition columns: _col0 (type: string)
+                        Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                        value expressions: _col1 (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Group By Operator
+                aggregations: count(VALUE._col0)
+                keys: KEY._col0 (type: string)
+                mode: mergepartial
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 125 Data size: 1328 Basic stats: COMPLETE Column stats: NONE
+                Filter Operator
+                  predicate: (ceil((_col1 / 0.01)) > 1) (type: boolean)
+                  Statistics: Num rows: 41 Data size: 435 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: _col0 (type: string), _col1 (type: bigint), ceil((_col1 / 0.01)) (type: bigint)
+                    outputColumnNames: _col0, _col1, _col2
+                    Statistics: Num rows: 41 Data size: 435 Basic stats: COMPLETE Column stats: NONE
+                    File Output Operator
+                      compressed: false
+                      Statistics: Num rows: 41 Data size: 435 Basic stats: COMPLETE Column stats: NONE
+                      table:
+                          input format: org.apache.hadoop.mapred.TextInputFormat
+                          output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                          serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+            Execution mode: vectorized
+
+  Stage: Stage-5
+    Dependency Collection
+
+  Stage: Stage-3
+    Move Operator
+      files:
+          hdfs directory: true
+#### A masked pattern was here ####
+
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 4 (SIMPLE_EDGE)
+        Reducer 3 <- Reducer 2 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: a
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Reduce Output Operator
+                    key expressions: key (type: string)
+                    sort order: +
+                    Map-reduce partition columns: key (type: string)
+                    Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                    value expressions: value (type: string)
+        Map 4 
+            Map Operator Tree:
+                TableScan
+                  alias: b
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  Reduce Output Operator
+                    key expressions: key (type: string)
+                    sort order: +
+                    Map-reduce partition columns: key (type: string)
+                    Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                    value expressions: value (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Left Outer Join0 to 1
+                keys:
+                  0 key (type: string)
+                  1 key (type: string)
+                outputColumnNames: _col0, _col1, _col6
+                Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col0 (type: string), _col1 (type: string), _col6 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2
+                  Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                  Reduce Output Operator
+                    key expressions: _col0 (type: string)
+                    sort order: +
+                    Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                    value expressions: _col1 (type: string), _col2 (type: bigint)
+        Reducer 3 
+            Reduce Operator Tree:
+              Select Operator
+                expressions: KEY.reducesinkkey0 (type: string), VALUE._col0 (type: string), VALUE._col1 (type: bigint)
+                outputColumnNames: _col0, _col1, _col2
+                Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                Limit
+                  Number of rows: 10
+                  Statistics: Num rows: 10 Data size: 100 Basic stats: COMPLETE Column stats: NONE
+                  File Output Operator
+                    compressed: false
+                    Statistics: Num rows: 10 Data size: 100 Basic stats: COMPLETE Column stats: NONE
+                    table:
+                        input format: org.apache.hadoop.mapred.TextInputFormat
+                        output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                        serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+            Execution mode: vectorized
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: 10
+      Processor Tree:
+        ListSink
+
+PREHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a LEFT OUTER JOIN DEST1 b ON a.key = b.key ORDER BY a.key LIMIT 10
+PREHOOK: type: QUERY
+PREHOOK: Input: default@dest1
+PREHOOK: Input: default@src
+#### A masked pattern was here ####
+POSTHOOK: query: SELECT a.key, a.value, b.value bvalue FROM SRC a LEFT OUTER JOIN DEST1 b ON a.key = b.key ORDER BY a.key LIMIT 10
+POSTHOOK: type: QUERY
+POSTHOOK: Input: default@dest1
+POSTHOOK: Input: default@src
+#### A masked pattern was here ####
+0	val_0	3
+0	val_0	3
+0	val_0	3
+10	val_10	1
+100	val_100	2
+100	val_100	2
+103	val_103	2
+103	val_103	2
+104	val_104	2
+104	val_104	2
+PREHOOK: query: -- with partition prunner 
+EXPLAIN EXTENDED SELECT * FROM SRCPART_LIMIT JOIN DEST1 ON DEST1.key = SRCPART_LIMIT.key AND SRCPART_LIMIT.hr='11'
+PREHOOK: type: QUERY
+POSTHOOK: query: -- with partition prunner 
+EXPLAIN EXTENDED SELECT * FROM SRCPART_LIMIT JOIN DEST1 ON DEST1.key = SRCPART_LIMIT.key AND SRCPART_LIMIT.hr='11'
+POSTHOOK: type: QUERY
+ABSTRACT SYNTAX TREE:
+  
+TOK_QUERY
+   TOK_FROM
+      TOK_JOIN
+         TOK_TABREF
+            TOK_TABNAME
+               SRCPART_LIMIT
+         TOK_TABREF
+            TOK_TABNAME
+               DEST1
+         AND
+            =
+               .
+                  TOK_TABLE_OR_COL
+                     DEST1
+                  key
+               .
+                  TOK_TABLE_OR_COL
+                     SRCPART_LIMIT
+                  key
+            =
+               .
+                  TOK_TABLE_OR_COL
+                     SRCPART_LIMIT
+                  hr
+               '11'
+   TOK_INSERT
+      TOK_DESTINATION
+         TOK_DIR
+            TOK_TMP_FILE
+      TOK_SELECT
+         TOK_SELEXPR
+            TOK_ALLCOLREF
+
+
+STAGE DEPENDENCIES:
+  Stage-4 is a root stage
+  Stage-5 depends on stages: Stage-4
+  Stage-3 depends on stages: Stage-4
+  Stage-1 depends on stages: Stage-4
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-4
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: srcpart_limit
+                  Statistics: Num rows: 58 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                  GatherStats: false
+                  Filter Operator
+                    isSamplingPred: true
+                    predicate: (((hash(rand()) & 2147483647) % 200) = 0) (type: boolean)
+                    Statistics: Num rows: 29 Data size: 2906 Basic stats: COMPLETE Column stats: NONE
+                    Group By Operator
+                      aggregations: count(1)
+                      keys: key (type: string)
+                      mode: hash
+                      outputColumnNames: _col0, _col1
+                      Statistics: Num rows: 29 Data size: 2906 Basic stats: COMPLETE Column stats: NONE
+                      Reduce Output Operator
+                        key expressions: _col0 (type: string)
+                        sort order: +
+                        Map-reduce partition columns: _col0 (type: string)
+                        Statistics: Num rows: 29 Data size: 2906 Basic stats: COMPLETE Column stats: NONE
+                        tag: -1
+                        value expressions: _col1 (type: bigint)
+                        auto parallelism: true
+            Path -> Alias:
+#### A masked pattern was here ####
+            Path -> Partition:
+#### A masked pattern was here ####
+                Partition
+                  base file name: hr=11
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  partition values:
+                    ds 2008-04-08
+                    hr 11
+                  properties:
+                    bucket_count -1
+                    columns key,value
+                    columns.comments 
+                    columns.types string:string
+#### A masked pattern was here ####
+                    name default.srcpart_limit
+                    numFiles 1
+                    partition_columns ds/hr
+                    partition_columns.types string:string
+                    serialization.ddl struct srcpart_limit { string key, string value}
+                    serialization.format 1
+                    serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    totalSize 5812
+#### A masked pattern was here ####
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                
+                    input format: org.apache.hadoop.mapred.TextInputFormat
+                    output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                    properties:
+                      bucket_count -1
+                      columns key,value
+                      columns.comments 
+                      columns.types string:string
+#### A masked pattern was here ####
+                      name default.srcpart_limit
+                      partition_columns ds/hr
+                      partition_columns.types string:string
+                      serialization.ddl struct srcpart_limit { string key, string value}
+                      serialization.format 1
+                      serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+#### A masked pattern was here ####
+                    serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    name: default.srcpart_limit
+                  name: default.srcpart_limit
+            Truncated Path -> Alias:
+              /srcpart_limit/ds=2008-04-08/hr=11 [srcpart_limit]
+        Reducer 2 
+            Needs Tagging: false
+            Reduce Operator Tree:
+              Group By Operator
+                aggregations: count(VALUE._col0)
+                keys: KEY._col0 (type: string)
+                mode: mergepartial
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 14 Data size: 1402 Basic stats: COMPLETE Column stats: NONE
+                Filter Operator
+                  isSamplingPred: false
+                  predicate: (ceil((_col1 / 0.01)) > 1) (type: boolean)
+                  Statistics: Num rows: 4 Data size: 400 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: _col0 (type: string), _col1 (type: bigint), ceil((_col1 / 0.01)) (type: bigint)
+                    outputColumnNames: _col0, _col1, _col2
+                    Statistics: Num rows: 4 Data size: 400 Basic stats: COMPLETE Column stats: NONE
+                    File Output Operator
+                      compressed: false
+                      GlobalTableId: 1
+#### A masked pattern was here ####
+                      NumFilesPerFileSink: 1
+                      Statistics: Num rows: 4 Data size: 400 Basic stats: COMPLETE Column stats: NONE
+#### A masked pattern was here ####
+                      table:
+                          input format: org.apache.hadoop.mapred.TextInputFormat
+                          output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                          properties:
+                            columns _col0,_col1,_col2
+                            columns.types string:bigint:bigint
+                            serialization.format 1
+                            serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                          serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                      TotalFiles: 1
+                      GatherStats: false
+                      MultiFileSpray: false
+            Execution mode: vectorized
+
+  Stage: Stage-5
+    Dependency Collection
+
+  Stage: Stage-3
+    Move Operator
+      files:
+          hdfs directory: true
+#### A masked pattern was here ####
+
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 3 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: srcpart_limit
+                  Statistics: Num rows: 29 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                  GatherStats: false
+                  Filter Operator
+                    isSamplingPred: false
+                    predicate: key is not null (type: boolean)
+                    Statistics: Num rows: 15 Data size: 3006 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: key (type: string)
+                      sort order: +
+                      Map-reduce partition columns: key (type: string)
+                      Statistics: Num rows: 15 Data size: 3006 Basic stats: COMPLETE Column stats: NONE
+                      tag: 0
+                      value expressions: value (type: string), ds (type: string)
+                      auto parallelism: true
+            Path -> Alias:
+#### A masked pattern was here ####
+            Path -> Partition:
+#### A masked pattern was here ####
+                Partition
+                  base file name: hr=11
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  partition values:
+                    ds 2008-04-08
+                    hr 11
+                  properties:
+                    bucket_count -1
+                    columns key,value
+                    columns.comments 
+                    columns.types string:string
+#### A masked pattern was here ####
+                    name default.srcpart_limit
+                    numFiles 1
+                    partition_columns ds/hr
+                    partition_columns.types string:string
+                    serialization.ddl struct srcpart_limit { string key, string value}
+                    serialization.format 1
+                    serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    totalSize 5812
+#### A masked pattern was here ####
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                
+                    input format: org.apache.hadoop.mapred.TextInputFormat
+                    output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                    properties:
+                      bucket_count -1
+                      columns key,value
+                      columns.comments 
+                      columns.types string:string
+#### A masked pattern was here ####
+                      name default.srcpart_limit
+                      partition_columns ds/hr
+                      partition_columns.types string:string
+                      serialization.ddl struct srcpart_limit { string key, string value}
+                      serialization.format 1
+                      serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+#### A masked pattern was here ####
+                    serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    name: default.srcpart_limit
+                  name: default.srcpart_limit
+            Truncated Path -> Alias:
+              /srcpart_limit/ds=2008-04-08/hr=11 [srcpart_limit]
+        Map 3 
+            Map Operator Tree:
+                TableScan
+                  alias: dest1
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  GatherStats: false
+                  Filter Operator
+                    isSamplingPred: false
+                    predicate: key is not null (type: boolean)
+                    Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: key (type: string)
+                      sort order: +
+                      Map-reduce partition columns: key (type: string)
+                      Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                      tag: 1
+                      value expressions: value (type: bigint)
+                      auto parallelism: true
+            Path -> Alias:
+#### A masked pattern was here ####
+            Path -> Partition:
+#### A masked pattern was here ####
+                Partition
+                  base file name: dest1
+                  input format: org.apache.hadoop.mapred.TextInputFormat
+                  output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                  properties:
+                    COLUMN_STATS_ACCURATE {"BASIC_STATS":"true"}
+                    bucket_count -1
+                    columns key,value
+                    columns.comments 
+                    columns.types string:bigint
+#### A masked pattern was here ####
+                    name default.dest1
+                    numFiles 1
+                    numRows 10
+                    rawDataSize 46
+                    serialization.ddl struct dest1 { string key, i64 value}
+                    serialization.format 1
+                    serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    totalSize 56
+#### A masked pattern was here ####
+                  serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                
+                    input format: org.apache.hadoop.mapred.TextInputFormat
+                    output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                    properties:
+                      COLUMN_STATS_ACCURATE {"BASIC_STATS":"true"}
+                      bucket_count -1
+                      columns key,value
+                      columns.comments 
+                      columns.types string:bigint
+#### A masked pattern was here ####
+                      name default.dest1
+                      numFiles 1
+                      numRows 10
+                      rawDataSize 46
+                      serialization.ddl struct dest1 { string key, i64 value}
+                      serialization.format 1
+                      serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                      totalSize 56
+#### A masked pattern was here ####
+                    serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    name: default.dest1
+                  name: default.dest1
+            Truncated Path -> Alias:
+              /dest1 [dest1]
+        Reducer 2 
+            Needs Tagging: false
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Inner Join 0 to 1
+                keys:
+                  0 key (type: string)
+                  1 key (type: string)
+                outputColumnNames: _col0, _col1, _col2, _col7, _col8
+                Position of Big Table: 0
+                Statistics: Num rows: 16 Data size: 3306 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col0 (type: string), _col1 (type: string), _col2 (type: string), '11' (type: string), _col7 (type: string), _col8 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2, _col3, _col4, _col5
+                  Statistics: Num rows: 16 Data size: 3306 Basic stats: COMPLETE Column stats: NONE
+                  File Output Operator
+                    compressed: false
+                    GlobalTableId: 0
+#### A masked pattern was here ####
+                    NumFilesPerFileSink: 1
+                    Statistics: Num rows: 16 Data size: 3306 Basic stats: COMPLETE Column stats: NONE
+#### A masked pattern was here ####
+                    table:
+                        input format: org.apache.hadoop.mapred.TextInputFormat
+                        output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                        properties:
+                          columns _col0,_col1,_col2,_col3,_col4,_col5
+                          columns.types string:string:string:string:string:bigint
+                          escape.delim \
+                          hive.serialization.extend.additional.nesting.levels true
+                          serialization.format 1
+                          serialization.lib org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                        serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+                    TotalFiles: 1
+                    GatherStats: false
+                    MultiFileSpray: false
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
+
+PREHOOK: query: -- with constant filter
+EXPLAIN SELECT * FROM SRCPART_LIMIT JOIN DEST1 ON DEST1.key = SRCPART_LIMIT.key AND SRCPART_LIMIT.hr='11' AND SRCPART_LIMIT.key=0
+PREHOOK: type: QUERY
+POSTHOOK: query: -- with constant filter
+EXPLAIN SELECT * FROM SRCPART_LIMIT JOIN DEST1 ON DEST1.key = SRCPART_LIMIT.key AND SRCPART_LIMIT.hr='11' AND SRCPART_LIMIT.key=0
+POSTHOOK: type: QUERY
+STAGE DEPENDENCIES:
+  Stage-4 is a root stage
+  Stage-5 depends on stages: Stage-4
+  Stage-3 depends on stages: Stage-4
+  Stage-1 depends on stages: Stage-4
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-4
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: srcpart_limit
+                  Statistics: Num rows: 1 Data size: 5812 Basic stats: PARTIAL Column stats: NONE
+                  Filter Operator
+                    predicate: (((hash(rand()) & 2147483647) % 200) = 0) (type: boolean)
+                    Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                    Group By Operator
+                      aggregations: count(1)
+                      keys: 0 (type: int)
+                      mode: hash
+                      outputColumnNames: _col0, _col1
+                      Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                      Reduce Output Operator
+                        key expressions: _col0 (type: int)
+                        sort order: +
+                        Map-reduce partition columns: _col0 (type: int)
+                        Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                        value expressions: _col1 (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Group By Operator
+                aggregations: count(VALUE._col0)
+                keys: KEY._col0 (type: int)
+                mode: mergepartial
+                outputColumnNames: _col0, _col1
+                Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                Filter Operator
+                  predicate: (ceil((_col1 / 0.01)) > 1) (type: boolean)
+                  Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: _col0 (type: int), _col1 (type: bigint), ceil((_col1 / 0.01)) (type: bigint)
+                    outputColumnNames: _col0, _col1, _col2
+                    Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                    File Output Operator
+                      compressed: false
+                      Statistics: Num rows: 1 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                      table:
+                          input format: org.apache.hadoop.mapred.TextInputFormat
+                          output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                          serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+            Execution mode: vectorized
+
+  Stage: Stage-5
+    Dependency Collection
+
+  Stage: Stage-3
+    Move Operator
+      files:
+          hdfs directory: true
+#### A masked pattern was here ####
+
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 3 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: srcpart_limit
+                  Statistics: Num rows: 57 Data size: 5812 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: (key = 0) (type: boolean)
+                    Statistics: Num rows: 28 Data size: 2855 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: '0' (type: string)
+                      sort order: +
+                      Map-reduce partition columns: '0' (type: string)
+                      Statistics: Num rows: 28 Data size: 2855 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: value (type: string), ds (type: string)
+        Map 3 
+            Map Operator Tree:
+                TableScan
+                  alias: dest1
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: (key = 0) (type: boolean)
+                    Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: '0' (type: string)
+                      sort order: +
+                      Map-reduce partition columns: '0' (type: string)
+                      Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: value (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Inner Join 0 to 1
+                keys:
+                  0 '0' (type: string)
+                  1 '0' (type: string)
+                outputColumnNames: _col1, _col2, _col8
+                Statistics: Num rows: 30 Data size: 3140 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: '0' (type: string), _col1 (type: string), _col2 (type: string), '11' (type: string), '0' (type: string), _col8 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2, _col3, _col4, _col5
+                  Statistics: Num rows: 30 Data size: 3140 Basic stats: COMPLETE Column stats: NONE
+                  File Output Operator
+                    compressed: false
+                    Statistics: Num rows: 30 Data size: 3140 Basic stats: COMPLETE Column stats: NONE
+                    table:
+                        input format: org.apache.hadoop.mapred.TextInputFormat
+                        output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                        serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
+
+PREHOOK: query: SELECT * FROM SRCPART_LIMIT JOIN DEST1 ON DEST1.key = SRCPART_LIMIT.key AND SRCPART_LIMIT.hr='11' AND SRCPART_LIMIT.key=0
+PREHOOK: type: QUERY
+PREHOOK: Input: default@dest1
+PREHOOK: Input: default@srcpart_limit
+PREHOOK: Input: default@srcpart_limit@ds=2008-04-08/hr=11
+#### A masked pattern was here ####
+POSTHOOK: query: SELECT * FROM SRCPART_LIMIT JOIN DEST1 ON DEST1.key = SRCPART_LIMIT.key AND SRCPART_LIMIT.hr='11' AND SRCPART_LIMIT.key=0
+POSTHOOK: type: QUERY
+POSTHOOK: Input: default@dest1
+POSTHOOK: Input: default@srcpart_limit
+POSTHOOK: Input: default@srcpart_limit@ds=2008-04-08/hr=11
+#### A masked pattern was here ####
+0	val_0	2008-04-08	11	0	3
+0	val_0	2008-04-08	11	0	3
+0	val_0	2008-04-08	11	0	3
+WARNING: Comparing a bigint and a string may result in a loss of precision.
+PREHOOK: query: -- no support if key column data type no match
+EXPLAIN SELECT * FROM SRC JOIN DEST1 on SRC.key = DEST1.value LIMIT 10
+PREHOOK: type: QUERY
+POSTHOOK: query: -- no support if key column data type no match
+EXPLAIN SELECT * FROM SRC JOIN DEST1 on SRC.key = DEST1.value LIMIT 10
+POSTHOOK: type: QUERY
+STAGE DEPENDENCIES:
+  Stage-1 is a root stage
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 3 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: src
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: UDFToDouble(key) is not null (type: boolean)
+                    Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: UDFToDouble(key) (type: double)
+                      sort order: +
+                      Map-reduce partition columns: UDFToDouble(key) (type: double)
+                      Statistics: Num rows: 250 Data size: 2656 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: key (type: string), value (type: string)
+        Map 3 
+            Map Operator Tree:
+                TableScan
+                  alias: dest1
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  Filter Operator
+                    predicate: UDFToDouble(value) is not null (type: boolean)
+                    Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: UDFToDouble(value) (type: double)
+                      sort order: +
+                      Map-reduce partition columns: UDFToDouble(value) (type: double)
+                      Statistics: Num rows: 5 Data size: 23 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: key (type: string), value (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Inner Join 0 to 1
+                keys:
+                  0 UDFToDouble(key) (type: double)
+                  1 UDFToDouble(value) (type: double)
+                outputColumnNames: _col0, _col1, _col5, _col6
+                Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col0 (type: string), _col1 (type: string), _col5 (type: string), _col6 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2, _col3
+                  Statistics: Num rows: 275 Data size: 2921 Basic stats: COMPLETE Column stats: NONE
+                  Limit
+                    Number of rows: 10
+                    Statistics: Num rows: 10 Data size: 100 Basic stats: COMPLETE Column stats: NONE
+                    File Output Operator
+                      compressed: false
+                      Statistics: Num rows: 10 Data size: 100 Basic stats: COMPLETE Column stats: NONE
+                      table:
+                          input format: org.apache.hadoop.mapred.TextInputFormat
+                          output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                          serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: 10
+      Processor Tree:
+        ListSink
+
+PREHOOK: query: -- no support if RIGHT OUTER JOIN
+EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a RIGHT OUTER JOIN DEST1 b ON a.key = b.key
+PREHOOK: type: QUERY
+POSTHOOK: query: -- no support if RIGHT OUTER JOIN
+EXPLAIN SELECT a.key, a.value, b.value bvalue FROM SRC a RIGHT OUTER JOIN DEST1 b ON a.key = b.key
+POSTHOOK: type: QUERY
+STAGE DEPENDENCIES:
+  Stage-1 is a root stage
+  Stage-0 depends on stages: Stage-1
+
+STAGE PLANS:
+  Stage: Stage-1
+    Tez
+      Edges:
+        Reducer 2 <- Map 1 (SIMPLE_EDGE), Map 3 (SIMPLE_EDGE)
+#### A masked pattern was here ####
+      Vertices:
+        Map 1 
+            Map Operator Tree:
+                TableScan
+                  alias: a
+                  Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: key (type: string), value (type: string)
+                    outputColumnNames: _col0, _col1
+                    Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: _col0 (type: string)
+                      sort order: +
+                      Map-reduce partition columns: _col0 (type: string)
+                      Statistics: Num rows: 500 Data size: 5312 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: _col1 (type: string)
+        Map 3 
+            Map Operator Tree:
+                TableScan
+                  alias: b
+                  Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                  Select Operator
+                    expressions: key (type: string), value (type: bigint)
+                    outputColumnNames: _col0, _col1
+                    Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                    Reduce Output Operator
+                      key expressions: _col0 (type: string)
+                      sort order: +
+                      Map-reduce partition columns: _col0 (type: string)
+                      Statistics: Num rows: 10 Data size: 46 Basic stats: COMPLETE Column stats: NONE
+                      value expressions: _col1 (type: bigint)
+        Reducer 2 
+            Reduce Operator Tree:
+              Merge Join Operator
+                condition map:
+                     Right Outer Join0 to 1
+                keys:
+                  0 _col0 (type: string)
+                  1 _col0 (type: string)
+                outputColumnNames: _col0, _col1, _col3
+                Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                Select Operator
+                  expressions: _col0 (type: string), _col1 (type: string), _col3 (type: bigint)
+                  outputColumnNames: _col0, _col1, _col2
+                  Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                  File Output Operator
+                    compressed: false
+                    Statistics: Num rows: 550 Data size: 5843 Basic stats: COMPLETE Column stats: NONE
+                    table:
+                        input format: org.apache.hadoop.mapred.TextInputFormat
+                        output format: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+                        serde: org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+
+  Stage: Stage-0
+    Fetch Operator
+      limit: -1
+      Processor Tree:
+        ListSink
+
